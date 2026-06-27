@@ -127,7 +127,7 @@ doc-summarizer/
 
 ### 1. Clone the Repository & Install Dependencies
 ```bash
-git clone <your-repo-url>
+git clone https://github.com/subhash-adak/doc-summarizer.git
 cd doc-summarizer
 python -m venv .venv
 source .venv/bin/activate  # On Windows: .venv\Scripts\activate
