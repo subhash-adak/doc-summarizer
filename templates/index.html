@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DocSummarizer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/static/css/style.css" />
+</head>
+<body>
+  <header class="header">
+    <div class="header-inner">
+      <div class="logo">
+        <span class="logo-icon">DS</span>
+        <span class="logo-text">DocSummarizer</span>
+        <span class="logo-badge">Gemini 2.5 Flash</span>
+      </div>
+      <nav class="nav">
+        {% if authenticated %}
+          <span class="nav-status nav-status--ok">Connected to Drive</span>
+          <a href="/auth/logout" class="btn btn--ghost">Sign out</a>
+        {% else %}
+          <span class="nav-status nav-status--off">Not connected</span>
+          <a href="/auth/login" class="btn btn--primary">Connect Google Drive</a>
+        {% endif %}
+      </nav>
+    </div>
+  </header>
+
+  <main class="main">
+    {% if demo_mode %}
+    <div class="demo-banner">
+      <span><strong>Demo Mode Active:</strong> Running on mock data. Place real keys in the <code>credentials/</code> folder to activate live mode.</span>
+    </div>
+    {% endif %}
+
+    {% if not authenticated %}
+    <section class="auth-gate">
+      <div class="auth-gate-inner">
+        <h1 class="auth-title">Summarize your Drive documents<br />with Gemini AI</h1>
+        <p class="auth-subtitle">Connect your Google Drive to list, select, and summarize PDF, DOCX, and TXT documents in seconds.</p>
+        <a href="/auth/login" class="btn btn--primary btn--lg">Connect Google Drive</a>
+        <p class="auth-note">Read-only access. We never modify your files.</p>
+      </div>
+    </section>
+    {% else %}
+    <div class="app-layout">
+      <aside class="sidebar">
+        <div class="sidebar-header">
+          <h2 class="sidebar-title">Drive Documents</h2>
+          <button class="btn btn--ghost btn--sm" id="refreshBtn" onclick="loadFiles()">Refresh</button>
+        </div>
+
+        <div class="sidebar-controls">
+          <div class="search-box">
+            <input type="text" id="searchInput" placeholder="Filter files by name..." oninput="filterFiles()" />
+          </div>
+          <div class="select-all-bar">
+            <label class="select-all-label">
+              <input type="checkbox" id="selectAllChk" onchange="toggleSelectAll(this.checked)" />
+              <span>Select All</span>
+            </label>
+            <span id="selectedCount" class="selected-count">0 selected</span>
+          </div>
+        </div>
+
+        <div class="sidebar-body" id="fileList">
+          <div class="loading-state">
+            <div class="spinner"></div>
+            <span>Loading documents...</span>
+          </div>
+        </div>
+        <div class="sidebar-footer">
+          <button class="btn btn--primary btn--full" id="summarizeBtn" disabled onclick="summarizeDocs()">
+            Summarize selected
+          </button>
+        </div>
+      </aside>
+
+      <section class="results-panel">
+        <div class="results-header">
+          <h2 class="results-title">Summaries</h2>
+          <div class="results-actions" id="exportActions">
+            <button class="btn btn--ghost btn--sm" id="downloadCsvBtn" type="button" disabled onclick="downloadReport('csv')">CSV</button>
+            <button class="btn btn--ghost btn--sm" id="downloadPdfBtn" type="button" disabled onclick="downloadReport('pdf')">PDF</button>
+          </div>
+        </div>
+
+        <div id="resultsBody">
+          <div class="empty-state">
+            <div class="empty-icon">[]</div>
+            <p>Select documents from the left panel and click <strong>Summarize selected</strong>.</p>
+          </div>
+        </div>
+      </section>
+    </div>
+    {% endif %}
+  </main>
+
+  <script src="/static/js/app.js"></script>
+</body>
+</html>
